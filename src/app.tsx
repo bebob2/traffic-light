@@ -1,7 +1,7 @@
 import { useMachine } from '@xstate/react'
 import { trafficLight } from './machine'
 import { cn } from './util'
-import { useEffect, useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 
 type Props = {}
 
@@ -15,6 +15,8 @@ export const App = (props: Props) => {
     }
   }, [state])
 
+  const [play, setPlay] = useState(true)
+
   useEffect(() => {
     // function giveDelay() {
     //   if (state.matches('red') || state.matches('green')) {
@@ -27,7 +29,13 @@ export const App = (props: Props) => {
     const handleSwitch = () => {
       send('SWITCH')
     }
-    const timeoutId = setTimeout(handleSwitch, timeoutTime)
+
+    let timeoutId: NodeJS.Timeout
+
+    if (play) {
+      timeoutId = setTimeout(handleSwitch, timeoutTime)
+    }
+
     return () => clearTimeout(timeoutId)
   })
 
@@ -58,10 +66,16 @@ export const App = (props: Props) => {
           ></div>
         </div>
         <button
-          className=" m-2  rounded-md border border-slate-900 bg-slate-100 p-2"
+          className=" rounded-md  border border-slate-900 bg-slate-100 p-2 px-4"
           onClick={() => send('SWITCH')}
         >
           Next
+        </button>
+        <button
+          className="   rounded-md border border-slate-900 bg-slate-100 p-2"
+          onClick={() => setPlay(!play)}
+        >
+          {play ? '⏸ stop' : '▶ start'}
         </button>
       </div>
     </>
