@@ -8,12 +8,20 @@ type Props = {}
 export const App = (props: Props) => {
   const [state, send] = useMachine(trafficLight)
   useEffect(() => {
+    function giveDelay() {
+      if (state.matches('red') || state.matches('green')) {
+        return 5000
+      } else {
+        return 2000
+      }
+    }
+
     const handleSwitch = () => {
       send('SWITCH')
     }
-    const intervalId = setInterval(handleSwitch, 2000)
-    return () => clearInterval(intervalId)
-  }, [])
+    const timeoutId = setTimeout(handleSwitch, giveDelay())
+    return () => clearTimeout(timeoutId)
+  })
 
   return (
     <>
