@@ -1,25 +1,33 @@
 import { useMachine } from '@xstate/react'
 import { trafficLight } from './machine'
 import { cn } from './util'
-import { useEffect } from 'react'
+import { useEffect, useMemo } from 'react'
 
 type Props = {}
 
 export const App = (props: Props) => {
   const [state, send] = useMachine(trafficLight)
-  useEffect(() => {
-    function giveDelay() {
-      if (state.matches('red') || state.matches('green')) {
-        return 5000
-      } else {
-        return 2000
-      }
+  const timeoutTime = useMemo(() => {
+    if (state.matches('red') || state.matches('green')) {
+      return 5000
+    } else {
+      return 2000
     }
+  }, [state])
+
+  useEffect(() => {
+    // function giveDelay() {
+    //   if (state.matches('red') || state.matches('green')) {
+    //     return 5000
+    //   } else {
+    //     return 2000
+    //   }
+    // }
 
     const handleSwitch = () => {
       send('SWITCH')
     }
-    const timeoutId = setTimeout(handleSwitch, giveDelay())
+    const timeoutId = setTimeout(handleSwitch, timeoutTime)
     return () => clearTimeout(timeoutId)
   })
 
